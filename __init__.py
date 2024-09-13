@@ -72,7 +72,7 @@ def calculate_image_resize(width, height, min_dim, max_dim):
   
   return new_width, new_height
 
-def resize_img(input_image, width, height, mode=Image.BILINEAR):
+def resize_img(input_image, width, height, mode=Image.LANCZOS):
   input_image = input_image.resize((width, height), mode)
   return input_image
 
@@ -103,7 +103,6 @@ class GlovyResizeNode:
       
       new_width, new_height = calculate_image_resize(width, height, min_dim, max_dim)
       im = resize_img(im, new_width, new_height)
-      print(image2Comfyimage(im))
       return (image2Comfyimage(im)[0], )
 
 NODE_CLASS_MAPPINGS = {
