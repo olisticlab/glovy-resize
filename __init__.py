@@ -28,12 +28,12 @@ def image2Comfyimage(img):
       h = image.size[1]
     
     if image.size[0] != w or image.size[1] != h:
-        continue
+      continue
     
-    image = np.array(image).astype(np.float16) / 255.0
+    image = np.array(image).astype(np.float32) / 255.0
     image = torch.from_numpy(image)[None,]
     if 'A' in i.getbands():
-      mask = np.array(i.getchannel('A')).astype(np.float16) / 255.0
+      mask = np.array(i.getchannel('A')).astype(np.float32) / 255.0
       mask = 1. - torch.from_numpy(mask)
     else:
       mask = torch.zeros((64,64), dtype=torch.float32, device="cpu")
@@ -77,33 +77,33 @@ def resize_img(input_image, width, height, mode=Image.LANCZOS):
   return input_image
 
 class GlovyResizeNode:
-    @classmethod
-    def INPUT_TYPES(s):
-        return {
-            "required":{
-                "image":("IMAGE",),
-                "min_dim":("INT",{
-                    "default": 768,
-                    "min": 1
-                }),
-                "max_dim":("INT",{
-                    "default": 1280,
-                    "min": 1
-                })
-            }
-        }
+  @classmethod
+  def INPUT_TYPES(s):
+      return {
+          "required":{
+              "image":("IMAGE",),
+              "min_dim":("INT",{
+                  "default": 768,
+                  "min": 1
+              }),
+              "max_dim":("INT",{
+                  "default": 1280,
+                  "min": 1
+              })
+          }
+      }
 
-    RETURN_TYPES = ("IMAGE",)
-    FUNCTION = "generate"
-    CATEGORY = "Glovy"
+  RETURN_TYPES = ("IMAGE",)
+  FUNCTION = "generate"
+  CATEGORY = "Glovy"
 
-    def generate(self, image, min_dim, max_dim):      
-      im = comfyimage2Image(image)
-      width, height = im.size
-      
-      new_width, new_height = calculate_image_resize(width, height, min_dim, max_dim)
-      im = resize_img(im, new_width, new_height)
-      return (image2Comfyimage(im)[0], )
+  def generate(self, image, min_dim, max_dim):      
+    im = comfyimage2Image(image)
+    width, height = im.size
+    
+    new_width, new_height = calculate_image_resize(width, height, min_dim, max_dim)
+    im = resize_img(im, new_width, new_height)
+    return (image2Comfyimage(im)[0], )
 
 NODE_CLASS_MAPPINGS = {
     "GlovyResizeNode": GlovyResizeNode
