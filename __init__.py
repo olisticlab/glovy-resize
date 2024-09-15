@@ -56,15 +56,15 @@ def calculate_image_resize(width, height, min_dim, max_dim):
   ratio = width / height
   
   if height < width:
-    new_height = min_dim
-    new_width = int(new_height * ratio)
+    new_height = height if min_dim==0 else min_dim
+    new_width = width if min_dim==0 else int(new_height * ratio)
 
     if new_width > max_dim:
       new_width = max_dim
       new_height = int(new_width / ratio)
   else:
-    new_width = min_dim
-    new_height = int(new_width / ratio)
+    new_width = width if min_dim==0 else min_dim
+    new_height = height if min_dim==0 else int(new_width / ratio)
 
     if new_height > max_dim:
       new_height = max_dim
@@ -84,7 +84,7 @@ class GlovyResizeNode:
               "image":("IMAGE",),
               "min_dim":("INT",{
                   "default": 768,
-                  "min": 1
+                  "min": 0
               }),
               "max_dim":("INT",{
                   "default": 1280,
